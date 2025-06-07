@@ -1,22 +1,20 @@
 name: Deploy React to AWS EC2
 
-
-# Triggers the workflow automatically on a push to the main branch. (Mandatory)
 on:
   push:
     branches:
-      - main  
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
-#This fetches the latest code from the GitHub repository. (Mandatory)
     steps:
+    # 1. Checkout repository
     - name: Checkout repository
       uses: actions/checkout@v3
 
-# Install Node.js and Dependencies
+    # 2. Setup Node.js
     - name: Install Node.js and dependencies
       uses: actions/setup-node@v3
       with:
@@ -24,19 +22,19 @@ jobs:
         cache: ''
 
     - run: npm install --no-lockfile
-    - run: npm run build  # Build React project
+    - run: npm run build
 
-#Securely copy files from GitHub to your EC2 instance.
+    # 3. Copy files to EC2
     - name: Deploy to EC2
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
-        source: "*"    #All github files will deploy 
-        target: "/home/ubuntu"
+        source: "*"           # Copies all files
+        target: "/var/myproject/aws-testing"
 
-#Runs a remote SSH command to restart the server.
+    # 4. Restart PM2 on EC2
     - name: Restart PM2
       uses: appleboy/ssh-action@master
       with:
@@ -44,7 +42,6 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          cd /home/ubuntu
-          /home/ubuntu/.nvm/versions/node/v20.18.3/bin/pm2 restart Frontend || /home/ubuntu/.nvm/versions/node/v20.18.3/bin/pm2 start server.js --name Frontend
-          
-
+          cd /var/myproject/aws-testing
+          /home/ubuntu/.nvm/versions/node/v20.18.3/bin/pm2 restart React-Server || \
+          /home/ubuntu/.nvm/versions/node/v20.18.3/bin/pm2 start server.cjs --name React-Server
