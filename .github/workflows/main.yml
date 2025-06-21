@@ -43,5 +43,5 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           cd /var/myproject/aws-testing
-          /home/ubuntu/.nvm/versions/node/v20.18.3/bin/pm2 restart React-Server || \
-          /home/ubuntu/.nvm/versions/node/v20.18.3/bin/pm2 start server.cjs --name React-Server
+          /home/ubuntu/.nvm/versions/node/v20.18.3/bin/pm2 restart server || \
+          /home/ubuntu/.nvm/versions/node/v20.18.3/bin/pm2 start server.cjs --name server
