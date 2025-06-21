@@ -1,5 +1,4 @@
 import React from "react";
-import SideBar from "./common/SideBar";
 import Main from "./common/Main";
 import Headers from "./common/Headers";
 import Footer from "./common/Footer";
